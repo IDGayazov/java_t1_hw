@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -33,7 +33,7 @@ public class Transaction {
     private BigDecimal amount;
 
     @Column(name="transaction_time")
-    private Timestamp time;
+    private LocalDateTime time;
 
     @ManyToOne
     @JoinColumn(name="account_id")

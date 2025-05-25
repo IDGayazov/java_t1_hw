@@ -1,0 +1,59 @@
+package com.example.task1.service.impl;
+
+import com.example.task1.dto.ClientDto;
+import com.example.task1.entity.Client;
+import com.example.task1.mapper.ClientMapper;
+import com.example.task1.repository.ClientRepository;
+import com.example.task1.service.ClientService;
+import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+
+import java.util.Random;
+
+@Service
+@Slf4j
+@RequiredArgsConstructor
+public class ClientServiceImpl implements ClientService {
+
+    private final ClientMapper clientMapper;
+    private final ClientRepository clientRepository;
+
+    @Override
+    public ClientDto registerClient(ClientDto clientDto) {
+        Client client = clientMapper.toEntity(clientDto);
+        Client createdClient = clientRepository.save(client);
+        log.info("Client with name: {} was successfully registered", createdClient.getFirstName());
+        return clientMapper.toDto(createdClient);
+    }
+
+    @Override
+    public ClientDto getClientById(Long clientId) {
+        Client client = clientRepository.findById(clientId).orElseThrow(
+                () -> new EntityNotFoundException("Client not found with id: " + clientId)
+        );
+        return clientMapper.toDto(client);
+    }
+
+    @Override
+    public ClientDto updateClientById(Long clientId, ClientDto clientDto) {
+        Client oldClient = clientRepository.findById(clientId).orElseThrow(
+                () -> new EntityNotFoundException("Client not found with id: " + clientId)
+        );
+
+        oldClient.setFirstName(clientDto.firstName());
+        oldClient.setMiddleName(clientDto.middleName());
+        oldClient.setLastName(clientDto.lastName());
+
+        Client updatedClient = clientRepository.save(oldClient);
+        log.info("Client with id: {} was updated successfully", clientId);
+        return clientMapper.toDto(updatedClient);
+    }
+
+    @Override
+    public void deleteClientById(Long clientId) {
+        clientRepository.deleteById(clientId);
+        log.info("Client with id: {} was successfully deleted", clientId);
+    }
+}

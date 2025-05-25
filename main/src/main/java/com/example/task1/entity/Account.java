@@ -40,9 +40,6 @@ public class Account {
     private AccountType accountType;
 
     @ManyToOne
-    @JoinColumn(
-        name = "client_id",
-        referencedColumnName = "client_id"
-    )
+    @JoinColumn(name = "client_id")
     private Client client;
 }

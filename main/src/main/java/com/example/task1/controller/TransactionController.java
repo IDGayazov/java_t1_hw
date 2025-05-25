@@ -1,0 +1,49 @@
+package com.example.task1.controller;
+
+import com.example.task1.dto.TransactionDto;
+import com.example.task1.service.TransactionService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@Slf4j
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/api/v1/transactions")
+public class TransactionController {
+
+    private final TransactionService transactionService;
+
+    @GetMapping("/{id}")
+    public TransactionDto get(@PathVariable("id") Long id){
+        log.info("Getting transaction with id: {}", id);
+        return transactionService.getTransactionById(id);
+    }
+
+    @PostMapping
+    public TransactionDto register(@RequestBody TransactionDto dto) {
+        log.info("Making transaction: {}", dto);
+        TransactionDto transactionDto = transactionService.createTransaction(dto);
+        return transactionDto;
+    }
+
+    @PutMapping("/{id}")
+    public TransactionDto update(@PathVariable("id") long id, @RequestBody TransactionDto dto) {
+        log.info("Updating transaction with id: {}", id);
+        return transactionService.updateTransactionById(id, dto);
+    }
+
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable("id") Long id){
+        log.info("Deleting transaction with id: {}", id);
+        transactionService.deleteTransactionById(id);
+    }
+
+}

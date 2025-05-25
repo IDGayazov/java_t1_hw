@@ -8,8 +8,7 @@ CREATE TABLE client(
     id BIGINT NOT NULL PRIMARY KEY DEFAULT nextval('client_seq'),
     first_name VARCHAR(50),
     last_name VARCHAR(50),
-    middle_name VARCHAR(50),
-    client_id BIGINT NOT NULL UNIQUE
+    middle_name VARCHAR(50)
 );
 
 -- changeset ilnaz:3
@@ -21,7 +20,7 @@ CREATE TABLE account(
     account_type VARCHAR(7) NOT NULL CHECK (account_type IN ('DEBIT', 'CREDIT')),
     balance DECIMAL(13, 2) NOT NULL DEFAULT 0.00,
     client_id BIGINT NOT NULL,
-    CONSTRAINT fk_account_client FOREIGN KEY (client_id) REFERENCES client(client_id)
+    CONSTRAINT fk_account_client FOREIGN KEY (client_id) REFERENCES client(id)
 );
 
 -- changeset ilnaz:5
