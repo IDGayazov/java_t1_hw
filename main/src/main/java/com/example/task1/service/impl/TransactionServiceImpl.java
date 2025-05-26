@@ -13,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -24,6 +26,13 @@ public class TransactionServiceImpl implements TransactionService {
     private final TransactionMapper transactionMapper;
 
     @Override
+    public List<TransactionDto> getAllTransactions() {
+        return transactionRepository.findAll().stream()
+                .map(transactionMapper::toDto)
+                .toList();
+    }
+
+    @Override
     public TransactionDto getTransactionById(Long id) {
         Transaction transaction = transactionRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Transaction not found with id: " + id));
@@ -32,8 +41,15 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public TransactionDto createTransaction(TransactionDto transactionDto) {
+        Account account = accountRepository.findById(transactionDto.accountId()).orElseThrow(
+                () -> new EntityNotFoundException("Account not found with id: " + transactionDto.accountId())
+        );
         Transaction transaction = transactionMapper.toEntity(transactionDto);
+        transaction.setAccount(account);
         transaction.setTime(LocalDateTime.now());
+
+        transactionRepository.save(transaction);
+
         log.info("Made transaction for account: {}", transaction.getAccount());
         return transactionMapper.toDto(transaction);
     }
@@ -44,15 +60,19 @@ public class TransactionServiceImpl implements TransactionService {
                 () -> new EntityNotFoundException("Transaction not found with id: " + id)
         );
 
-        Account account = accountRepository.findById(transactionDto.accountId()).orElseThrow(
-                () -> new EntityNotFoundException("Account not found with id: " + transactionDto.accountId())
-        );
+        if(transactionDto.accountId() != null){
+            Account account = accountRepository.findById(transactionDto.accountId()).orElseThrow(
+                    () -> new EntityNotFoundException("Account not found with id: " + transactionDto.accountId())
+            );
+            transaction.setAccount(account);
+        }
 
-        transaction.setAccount(account);
-        transaction.setAmount(transactionDto.amount());
+        Optional.ofNullable(transactionDto.amount()).ifPresent(transaction::setAmount);
+
+        Transaction updatedTransaction = transactionRepository.save(transaction);
 
         log.info("Updated transaction with id: {}", id);
-        return transactionMapper.toDto(transaction);
+        return transactionMapper.toDto(updatedTransaction);
     }
 
     @Override

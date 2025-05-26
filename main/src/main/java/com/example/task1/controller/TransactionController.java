@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -21,6 +23,12 @@ public class TransactionController {
 
     private final TransactionService transactionService;
 
+    @GetMapping
+    public List<TransactionDto> getAllTransactions(){
+        log.info("Getting all transactions");
+        return transactionService.getAllTransactions();
+    }
+
     @GetMapping("/{id}")
     public TransactionDto get(@PathVariable("id") Long id){
         log.info("Getting transaction with id: {}", id);
@@ -28,10 +36,9 @@ public class TransactionController {
     }
 
     @PostMapping
-    public TransactionDto register(@RequestBody TransactionDto dto) {
+    public TransactionDto save(@RequestBody TransactionDto dto) {
         log.info("Making transaction: {}", dto);
-        TransactionDto transactionDto = transactionService.createTransaction(dto);
-        return transactionDto;
+        return transactionService.createTransaction(dto);
     }
 
     @PutMapping("/{id}")

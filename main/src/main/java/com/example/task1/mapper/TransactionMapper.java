@@ -11,5 +11,6 @@ public interface TransactionMapper {
     @Mapping(target="time", ignore=true)
     Transaction toEntity(TransactionDto dto);
 
+    @Mapping(target="accountId", expression = "java(entity.getAccount().getId())")
     TransactionDto toDto(Transaction entity);
 }

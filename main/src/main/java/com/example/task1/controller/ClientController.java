@@ -25,23 +25,20 @@ public class ClientController {
 
     @GetMapping("/{id}")
     public ClientDto getClient(@PathVariable("id") Long clientId) {
-        log.debug("Getting client with id ");
-        ClientDto clientDto = clientService.getClientById(clientId);
-        return clientDto;
+        log.info("Getting client with id: {}", clientId);
+        return clientService.getClientById(clientId);
     }
 
     @PostMapping
     public ClientDto register(@RequestBody ClientDto clientDto) {
         log.info("Registering client: {}", clientDto);
-        ClientDto dto = clientService.registerClient(clientDto);
-        return dto;
+        return clientService.registerClient(clientDto);
     }
 
     @PutMapping("/{id}")
     public ClientDto update(@PathVariable("id") long clientId, @RequestBody ClientDto clientDto) {
         log.info("Updating client with id: {}", clientId);
-        ClientDto dto = clientService.updateClientById(clientId, clientDto);
-        return dto;
+        return clientService.updateClientById(clientId, clientDto);
     }
 
     @DeleteMapping("/{id}")

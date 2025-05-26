@@ -23,7 +23,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(InternalError.class)
     public ResponseEntity<ResponseDto> internalServerErrorHandler(InternalError error){
         log.error(error.getMessage(), error);
-        ResponseDto errorDto = new ResponseDto(error.getMessage());
-        return new ResponseEntity<>(errorDto, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(new ResponseDto(error.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
