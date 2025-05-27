@@ -1,7 +1,7 @@
 package com.example.task1.service;
 
-import com.example.task1.entity.DataSourceErrorLog;
+import org.aspectj.lang.reflect.MethodSignature;
 
 public interface DataSourceErrorLogService {
-    DataSourceErrorLog saveErrorLog(DataSourceErrorLog errorLog);
+    void saveErrorLog(MethodSignature signature, Exception exception);
 }

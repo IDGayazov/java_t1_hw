@@ -27,8 +27,12 @@ import java.time.LocalDateTime;
 @Table(name="financial_transaction")
 public class Transaction {
     @Id
-    @GeneratedValue(strategy= GenerationType.SEQUENCE, generator = "transaction_sequence")
-    @SequenceGenerator(name="transaction_sequence", sequenceName="transaction_seq")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "transaction_sequence")
+    @SequenceGenerator(
+            name="transaction_sequence",
+            sequenceName="transaction_seq",
+            allocationSize = 50
+    )
     private Long id;
 
     @Column(name = "amount", precision = 13, scale = 2, nullable = false)

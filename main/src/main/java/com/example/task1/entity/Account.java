@@ -30,8 +30,12 @@ import java.math.BigDecimal;
 public class Account {
 
     @Id
-    @GeneratedValue(strategy= GenerationType.SEQUENCE, generator = "account_sequence")
-    @SequenceGenerator(name="account_sequence", sequenceName="account_seq")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "account_sequence")
+    @SequenceGenerator(
+            name="account_sequence",
+            sequenceName="account_seq",
+            allocationSize = 50
+    )
     private Long id;
 
     @Column(name = "balance", precision = 13, scale = 2, nullable = false)

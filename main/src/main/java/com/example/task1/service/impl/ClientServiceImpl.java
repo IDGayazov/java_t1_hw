@@ -1,20 +1,22 @@
 package com.example.task1.service.impl;
 
+import com.example.task1.annotation.LoggingException;
 import com.example.task1.dto.ClientDto;
 import com.example.task1.entity.Client;
 import com.example.task1.mapper.ClientMapper;
 import com.example.task1.repository.ClientRepository;
 import com.example.task1.service.ClientService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-import java.util.Random;
 
 @Service
 @Slf4j
+@LoggingException
 @RequiredArgsConstructor
 public class ClientServiceImpl implements ClientService {
 

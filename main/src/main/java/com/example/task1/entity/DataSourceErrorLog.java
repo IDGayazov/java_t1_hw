@@ -8,6 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,13 +16,18 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name="data_source_error_log")
 public class DataSourceErrorLog {
     @Id
-    @GeneratedValue(strategy= GenerationType.SEQUENCE, generator = "data_error_log_sequence")
-    @SequenceGenerator(name="data_error_log_sequence", sequenceName="data_error_log_seq")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "data_error_log_sequence")
+    @SequenceGenerator(
+            name="data_error_log_sequence",
+            sequenceName="data_error_log_seq",
+            allocationSize = 50
+    )
     private Long id;
 
     @Column(name="stacktrace_text")

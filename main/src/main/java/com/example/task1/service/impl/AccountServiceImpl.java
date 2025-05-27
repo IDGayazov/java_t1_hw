@@ -1,5 +1,6 @@
 package com.example.task1.service.impl;
 
+import com.example.task1.annotation.LoggingException;
 import com.example.task1.dto.AccountDto;
 import com.example.task1.entity.Account;
 import com.example.task1.entity.Client;
@@ -9,6 +10,7 @@ import com.example.task1.repository.AccountRepository;
 import com.example.task1.repository.ClientRepository;
 import com.example.task1.service.AccountService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,8 @@ import java.util.Optional;
 
 @Slf4j
 @Service
+@Transactional
+@LoggingException
 @RequiredArgsConstructor
 public class AccountServiceImpl implements AccountService {
 
