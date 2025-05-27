@@ -47,30 +47,35 @@ public class DataGenerator implements CommandLineRunner {
                 .firstName("Ivan")
                 .lastName("Ivanov")
                 .middleName("Ivanovich")
+                .clientId(234L)
                 .build();
 
         Client client2 = Client.builder()
                 .firstName("Igor")
                 .lastName("Sergeev")
                 .middleName("Semenovich")
+                .clientId(189L)
                 .build();
 
         Client client3 = Client.builder()
                 .firstName("Andrey")
                 .lastName("Dmitriev")
                 .middleName("Sergeevich")
+                .clientId(178L)
                 .build();
 
         Client client4 = Client.builder()
                 .firstName("Aleksey")
                 .lastName("Gomonov")
                 .middleName("Viktotovich")
+                .clientId(153L)
                 .build();
 
         Client client5 = Client.builder()
                 .firstName("Matvey")
                 .lastName("Maksimov")
                 .middleName("Ivanovich")
+                .clientId(156L)
                 .build();
 
         clientRepository.saveAll(List.of(client1, client2, client3, client4, client5));

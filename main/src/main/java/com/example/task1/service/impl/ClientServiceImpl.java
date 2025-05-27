@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.Random;
 
 @Service
@@ -38,15 +39,16 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public ClientDto updateClientById(Long clientId, ClientDto clientDto) {
-        Client oldClient = clientRepository.findById(clientId).orElseThrow(
+        Client client = clientRepository.findById(clientId).orElseThrow(
                 () -> new EntityNotFoundException("Client not found with id: " + clientId)
         );
 
-        oldClient.setFirstName(clientDto.firstName());
-        oldClient.setMiddleName(clientDto.middleName());
-        oldClient.setLastName(clientDto.lastName());
+        Optional.ofNullable(clientDto.firstName()).ifPresent(client::setFirstName);
+        Optional.ofNullable(clientDto.middleName()).ifPresent(client::setMiddleName);
+        Optional.ofNullable(clientDto.lastName()).ifPresent(client::setLastName);
+        Optional.ofNullable(clientDto.clientId()).ifPresent(client::setClientId);
 
-        Client updatedClient = clientRepository.save(oldClient);
+        Client updatedClient = clientRepository.save(client);
         log.info("Client with id: {} was updated successfully", clientId);
         return clientMapper.toDto(updatedClient);
     }

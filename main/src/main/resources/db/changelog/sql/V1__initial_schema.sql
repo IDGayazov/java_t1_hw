@@ -8,7 +8,8 @@ CREATE TABLE client(
     id BIGINT NOT NULL PRIMARY KEY DEFAULT nextval('client_seq'),
     first_name VARCHAR(50),
     last_name VARCHAR(50),
-    middle_name VARCHAR(50)
+    middle_name VARCHAR(50),
+    client_id BIGINT NOT NULL
 );
 
 -- changeset ilnaz:3
