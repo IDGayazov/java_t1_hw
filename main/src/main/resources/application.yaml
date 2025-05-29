@@ -18,5 +18,7 @@ server:
   port: 8085
 
 app:
-  data.generator.enabled: false
+  data:
+    cache-time-min: 2
+    generator.enabled: false
   time.limit-ms: 1000

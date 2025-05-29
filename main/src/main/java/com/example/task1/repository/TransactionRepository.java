@@ -1,9 +1,20 @@
 package com.example.task1.repository;
 
+import com.example.task1.annotation.Cached;
 import com.example.task1.entity.Transaction;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+import java.util.Optional;
+
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
+
+    @Cached
+    Optional<Transaction> findById(Long id);
+
+    @Cached
+    List<Transaction> findAll();
+
 }
