@@ -1,6 +1,7 @@
 package com.example.task1.service.impl;
 
 import com.example.task1.annotation.LoggingException;
+import com.example.task1.annotation.Metric;
 import com.example.task1.dto.ClientDto;
 import com.example.task1.entity.Client;
 import com.example.task1.mapper.ClientMapper;
@@ -23,6 +24,7 @@ public class ClientServiceImpl implements ClientService {
     private final ClientMapper clientMapper;
     private final ClientRepository clientRepository;
 
+    @Metric
     @Override
     public ClientDto registerClient(ClientDto clientDto) {
         Client client = clientMapper.toEntity(clientDto);
@@ -31,6 +33,7 @@ public class ClientServiceImpl implements ClientService {
         return clientMapper.toDto(createdClient);
     }
 
+    @Metric
     @Override
     public ClientDto getClientById(Long clientId) {
         Client client = clientRepository.findById(clientId).orElseThrow(
@@ -39,6 +42,7 @@ public class ClientServiceImpl implements ClientService {
         return clientMapper.toDto(client);
     }
 
+    @Metric
     @Override
     public ClientDto updateClientById(Long clientId, ClientDto clientDto) {
         Client client = clientRepository.findById(clientId).orElseThrow(
@@ -55,6 +59,7 @@ public class ClientServiceImpl implements ClientService {
         return clientMapper.toDto(updatedClient);
     }
 
+    @Metric
     @Override
     public void deleteClientById(Long clientId) {
         if(!clientRepository.existsById(clientId)){

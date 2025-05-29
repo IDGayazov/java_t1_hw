@@ -17,4 +17,6 @@ spring:
 server:
   port: 8085
 
-app.data.generator.enabled: false
+app:
+  data.generator.enabled: false
+  time.limit-ms: 1000

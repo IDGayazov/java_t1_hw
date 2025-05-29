@@ -1,6 +1,7 @@
 package com.example.task1.service.impl;
 
 import com.example.task1.annotation.LoggingException;
+import com.example.task1.annotation.Metric;
 import com.example.task1.dto.TransactionDto;
 import com.example.task1.entity.Account;
 import com.example.task1.entity.Transaction;
@@ -43,6 +44,7 @@ public class TransactionServiceImpl implements TransactionService {
         return transactionMapper.toDto(transaction);
     }
 
+    @Metric
     @Override
     public TransactionDto createTransaction(TransactionDto transactionDto) {
         Account account = accountRepository.findById(transactionDto.accountId()).orElseThrow(
@@ -58,6 +60,7 @@ public class TransactionServiceImpl implements TransactionService {
         return transactionMapper.toDto(transaction);
     }
 
+    @Metric
     @Override
     public TransactionDto updateTransactionById(Long id, TransactionDto transactionDto) {
         Transaction transaction = transactionRepository.findById(id).orElseThrow(
