@@ -14,6 +14,14 @@ spring:
     enabled: true
     change-log: classpath:db/changelog/db.changelog-master.xml
 
+kafka:
+  bootstrap:
+    server: ${KAFKA_SERVER:localhost:9092}
+  producer:
+    enable: true
+  topic:
+    client-topic: t1_demo_metrics
+
 server:
   port: 8085
 
