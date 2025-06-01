@@ -1,6 +1,7 @@
 package com.example.task1.aop;
 
 import com.example.task1.dto.ErrorLogDto;
+import com.example.task1.kafka.KafkaClientProducer;
 import com.example.task1.service.ErrorLogService;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
@@ -8,6 +9,7 @@ import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Aspect
@@ -17,10 +19,17 @@ public class ErrorLogging {
     private static final String LOGGING_ANNOTATION =
             "com.example.task1.annotation.LoggingException";
 
-    private final ErrorLogService errorLogService;
+    private static final String KAFKA_ERROR_HEADER_MESSAGE = "DATA_SOURCE";
 
-    public ErrorLogging(@Qualifier("dataSourceErrorService") ErrorLogService errorLogService){
+    @Value("${kafka.producer.topic.client-topic}")
+    private String topicName;
+
+    private final ErrorLogService errorLogService;
+    private final KafkaClientProducer<ErrorLogDto> kafkaClientProducer;
+
+    public ErrorLogging(@Qualifier("dataSourceErrorService") ErrorLogService errorLogService, KafkaClientProducer<ErrorLogDto> kafkaClientProducer){
         this.errorLogService = errorLogService;
+        this.kafkaClientProducer = kafkaClientProducer;
     }
 
     @AfterThrowing(
@@ -30,7 +39,13 @@ public class ErrorLogging {
     public void logServiceError(JoinPoint joinPoint, Exception ex){
         try{
             MethodSignature signature = (MethodSignature) joinPoint.getSignature();
-            errorLogService.saveErrorLog(new ErrorLogDto(signature, ex, null));
+            ErrorLogDto errorLogDto = new ErrorLogDto(signature.getName(), ex, null);
+            try{
+                kafkaClientProducer.sendWithErrorCode(topicName, KAFKA_ERROR_HEADER_MESSAGE, errorLogDto);
+            }catch(Exception e){
+                log.error("Failed to send metrics to Kafka, saving to DB instead", e);
+                errorLogService.saveErrorLog(errorLogDto);
+            }
         }catch(Exception e){
             log.error("Error in saving CRUD error log in DB");
         }

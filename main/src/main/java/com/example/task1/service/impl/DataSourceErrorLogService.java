@@ -22,9 +22,9 @@ public class DataSourceErrorLogService implements ErrorLogService {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void saveErrorLog(ErrorLogDto logDto) {
         DataSourceErrorLog log = DataSourceErrorLog.builder()
-                .message(logDto.exception().getMessage())
-                .stacktraceText(getStackTraceAsString(logDto.exception()))
-                .methodSignature(logDto.methodSignature().toString())
+                .message(logDto.getException().getMessage())
+                .stacktraceText(getStackTraceAsString(logDto.getException()))
+                .methodSignature(logDto.getMethodName())
                 .build();
         repository.save(log);
     }

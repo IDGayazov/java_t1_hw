@@ -1,13 +1,10 @@
 package com.example.task1.config;
 
-import com.example.task1.dto.ErrorLogDto;
-import com.example.task1.kafka.KafkaClientProducer;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -23,26 +20,15 @@ import java.util.Map;
 @Configuration
 public class KafkaConfiguration<T> {
 
-    @Value("${t1.kafka.bootstrap.server}")
+    @Value("${kafka.bootstrap.server}")
     private String servers;
-    @Value("${t1.kafka.topic.client-topic}")
+    @Value("${kafka.topic.client-topic}")
     private String clientTopic;
 
     @Bean("client")
     @Primary
     public KafkaTemplate<String, T> kafkaClientTemplate(@Qualifier("producerClientFactory") ProducerFactory<String, T> producerPatFactory) {
         return new KafkaTemplate<>(producerPatFactory);
-    }
-
-    @Bean
-    @ConditionalOnProperty(
-            value = "kafka.producer.enable",
-            havingValue = "true",
-            matchIfMissing = true
-    )
-    public KafkaClientProducer producerClient(@Qualifier("client") KafkaTemplate<String, ErrorLogDto> template) {
-        template.setDefaultTopic(clientTopic);
-        return new KafkaClientProducer(template);
     }
 
     @Bean("producerClientFactory")
