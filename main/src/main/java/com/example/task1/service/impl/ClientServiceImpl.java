@@ -1,5 +1,6 @@
 package com.example.task1.service.impl;
 
+import com.example.task1.annotation.LogError;
 import com.example.task1.annotation.LoggingException;
 import com.example.task1.annotation.Metric;
 import com.example.task1.dto.ClientDto;
@@ -35,6 +36,7 @@ public class ClientServiceImpl implements ClientService {
 
     @Metric
     @Override
+    @LogError
     public ClientDto getClientById(Long clientId) {
         Client client = clientRepository.findById(clientId).orElseThrow(
                 () -> new EntityNotFoundException("Client not found with id: " + clientId)
