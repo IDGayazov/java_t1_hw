@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: t1-java-hw
+  profiles:
+    active: dev
+  datasource:
+    url: jdbc:postgresql://postgresdb:5434/test_db
+    driverClassName: org.postgresql.Driver
+    username:
+    password:
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/db.changelog-master.xml
+
+kafka:
+  bootstrap:
+    server: ${KAFKA_SERVER:localhost:9092}
+  producer:
+    enable: true
+  topic:
+    client-topic: t1_demo_metrics
+
+server:
+  port: 8085
+
+app:
+  data:
+    cache-time-min: 2
+    generator.enabled: false
+  time.limit-ms: 1000
