@@ -1,7 +1,10 @@
 package com.example.task1.entity;
 
+import com.example.task1.entity.enums.TransactionStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -40,6 +43,16 @@ public class Transaction {
 
     @Column(name="transaction_time")
     private LocalDateTime time;
+
+    @Column(name="transaction_id")
+    private Long transactionId;
+
+    @Column(name="ttime")
+    private LocalDateTime timestamp;
+
+    @Column(name="status")
+    @Enumerated(EnumType.STRING)
+    private TransactionStatus status;
 
     @ManyToOne
     @JoinColumn(name="account_id")

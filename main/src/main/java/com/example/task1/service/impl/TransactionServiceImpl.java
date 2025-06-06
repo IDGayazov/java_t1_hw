@@ -2,9 +2,12 @@ package com.example.task1.service.impl;
 
 import com.example.task1.annotation.LoggingException;
 import com.example.task1.annotation.Metric;
+import com.example.task1.dto.ProcessedTransactionDto;
 import com.example.task1.dto.TransactionDto;
 import com.example.task1.entity.Account;
 import com.example.task1.entity.Transaction;
+import com.example.task1.entity.enums.AccountStatus;
+import com.example.task1.entity.enums.TransactionStatus;
 import com.example.task1.mapper.TransactionMapper;
 import com.example.task1.repository.AccountRepository;
 import com.example.task1.repository.TransactionRepository;
@@ -46,18 +49,37 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Metric
     @Override
-    public TransactionDto createTransaction(TransactionDto transactionDto) {
-        Account account = accountRepository.findById(transactionDto.accountId()).orElseThrow(
-                () -> new EntityNotFoundException("Account not found with id: " + transactionDto.accountId())
-        );
+    public ProcessedTransactionDto createTransaction(TransactionDto transactionDto) {
+        Account account = accountRepository.findById(transactionDto.accountId())
+                .orElseThrow(() -> new EntityNotFoundException("Account not found"));
+
+        if (!AccountStatus.OPEN.equals(account.getAccountStatus())) {
+            throw new IllegalStateException("Account is not in OPEN status");
+        }
+
         Transaction transaction = transactionMapper.toEntity(transactionDto);
         transaction.setAccount(account);
         transaction.setTime(LocalDateTime.now());
+        transaction.setStatus(TransactionStatus.REQUESTED);
 
-        transactionRepository.save(transaction);
+        account.setBalance(account.getBalance().add(transactionDto.amount()));
+        accountRepository.save(account);
 
-        log.info("Made transaction for account: {}", transaction.getAccount());
-        return transactionMapper.toDto(transaction);
+        Transaction savedTransaction = transactionRepository.save(transaction);
+
+        ProcessedTransactionDto processedTransactionDto = new ProcessedTransactionDto(
+                savedTransaction.getAccount().getClient().getClientId(),
+                account.getAccountId(),
+                savedTransaction.getId(),
+                savedTransaction.getTimestamp(),
+                savedTransaction.getAmount(),
+                savedTransaction.getAccount().getBalance()
+        );
+
+        log.info("Transaction created for account {} with new balance {}",
+                account.getId(), account.getBalance());
+
+        return processedTransactionDto;
     }
 
     @Metric

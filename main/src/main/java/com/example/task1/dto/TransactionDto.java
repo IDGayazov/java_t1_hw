@@ -7,6 +7,9 @@ public record TransactionDto (
         Long id,
         BigDecimal amount,
         Long accountId,
-        LocalDateTime time
+        LocalDateTime time,
+        String status,
+        LocalDateTime timestamp,
+        Long transactionId
 ) {
 }

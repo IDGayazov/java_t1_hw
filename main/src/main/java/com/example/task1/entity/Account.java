@@ -1,5 +1,6 @@
 package com.example.task1.entity;
 
+import com.example.task1.entity.enums.AccountStatus;
 import com.example.task1.entity.enums.AccountType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -40,6 +41,16 @@ public class Account {
 
     @Column(name = "balance", precision = 13, scale = 2, nullable = false)
     private BigDecimal balance;
+
+    @Column(name="account_status")
+    @Enumerated(EnumType.STRING)
+    private AccountStatus accountStatus;
+
+    @Column(name="account_id")
+    private Long accountId;
+
+    @Column(name="frozen_amount")
+    private BigDecimal frozenAmount;
 
     @Column(name = "account_type")
     @Enumerated(EnumType.STRING)

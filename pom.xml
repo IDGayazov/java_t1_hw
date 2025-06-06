@@ -64,5 +64,6 @@
 
     <modules>
         <module>main</module>
+        <module>transactionservice</module>
     </modules>
 </project>

@@ -9,7 +9,7 @@ CREATE TABLE client(
     first_name VARCHAR(50),
     last_name VARCHAR(50),
     middle_name VARCHAR(50),
-    client_id BIGINT NOT NULL
+    client_id BIGINT NOT NULL UNIQUE
 );
 
 -- changeset ilnaz:3
@@ -20,6 +20,9 @@ CREATE TABLE account(
     id BIGINT NOT NULL PRIMARY KEY DEFAULT nextval('account_seq'),
     account_type VARCHAR(7) NOT NULL CHECK (account_type IN ('DEBIT', 'CREDIT')),
     balance DECIMAL(13, 2) NOT NULL DEFAULT 0.00,
+    account_status VARCHAR(30) NOT NULL,
+    account_id BIGINT NOT NULL UNIQUE,
+    frozen_amount DECIMAL(13, 2) NOT NULL DEFAULT 0.00,
     client_id BIGINT NOT NULL,
     CONSTRAINT fk_account_client FOREIGN KEY (client_id) REFERENCES client(id)
 );
@@ -32,6 +35,9 @@ CREATE TABLE financial_transaction(
     id BIGINT NOT NULL PRIMARY KEY DEFAULT nextval('transaction_seq'),
     amount DECIMAL(13, 2) NOT NULL,
     transaction_time TIMESTAMP NOT NULL,
+    transaction_status VARCHAR(30) NOT NULL,
+    transaction_id BIGINT NOT NULL UNIQUE,
+    ttime TIMESTAMP NOT NULL,
     account_id BIGINT NOT NULL,
     CONSTRAINT fk_financial_transaction_account FOREIGN KEY (account_id) REFERENCES account(id)
 );

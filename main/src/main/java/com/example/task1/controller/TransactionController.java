@@ -1,5 +1,6 @@
 package com.example.task1.controller;
 
+import com.example.task1.dto.ProcessedTransactionDto;
 import com.example.task1.dto.TransactionDto;
 import com.example.task1.service.TransactionService;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +37,7 @@ public class TransactionController {
     }
 
     @PostMapping
-    public TransactionDto save(@RequestBody TransactionDto dto) {
+    public ProcessedTransactionDto save(@RequestBody TransactionDto dto) {
         log.info("Making transaction: {}", dto);
         return transactionService.createTransaction(dto);
     }
