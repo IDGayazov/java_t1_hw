@@ -2,11 +2,12 @@ package com.example.task1.mapper;
 
 import com.example.task1.dto.AccountDto;
 import com.example.task1.entity.Account;
+import com.example.task1.entity.enums.AccountStatus;
 import com.example.task1.entity.enums.AccountType;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring", imports= AccountType.class)
+@Mapper(componentModel = "spring", imports= {AccountType.class, AccountStatus.class})
 public interface AccountMapper {
 
     @Mapping(target="clientId", expression = "java(account.getClient().getId())")

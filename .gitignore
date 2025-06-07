@@ -4,6 +4,7 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 main/src/main/resources/application-dev.yaml
+transactionservice/src/main/resources/application-dev.yaml
 
 ### STS ###
 .apt_generated

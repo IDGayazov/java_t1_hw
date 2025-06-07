@@ -13,7 +13,6 @@ spring:
   liquibase:
     enabled: true
     change-log: classpath:db/changelog/db.changelog-master.xml
-
 kafka:
   bootstrap:
     server: ${KAFKA_SERVER:localhost:9092}
@@ -28,13 +27,11 @@ kafka:
     heartbeat.interval: 3000
     topic:
       transactions-topic: t1_demo_transactions
-      transactions-accept: t1_demo_transaction_accept
 
 server:
-  port: 8085
+  port: 8086
 
-app:
-  data:
-    cache-time-min: 2
-    generator.enabled: false
-  time.limit-ms: 1000
+transaction:
+  limits:
+    max-count: 5  # Максимальное количество транзакций (N)
+    time-window: 60  # Временное окно в секундах (T)

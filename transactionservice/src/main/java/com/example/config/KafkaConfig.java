@@ -1,7 +1,9 @@
-package com.example.task1.config;
+package com.example.config;
 
-import com.example.task1.dto.TransactionDto;
-import com.example.task1.kafka.MessageDeserializer;
+import com.example.kafka.MessageDeserializer;
+import com.example.model.TransactionResult;
+import com.example.model.dto.TransactionDto;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -11,7 +13,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
@@ -31,7 +32,8 @@ import java.util.Map;
 
 @Slf4j
 @Configuration
-public class KafkaConfiguration<T> {
+@RequiredArgsConstructor
+public class KafkaConfig {
 
     @Value("${kafka.bootstrap.server}")
     private String servers;
@@ -60,7 +62,7 @@ public class KafkaConfiguration<T> {
         props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, MessageDeserializer.class);
-        props.put(JsonDeserializer.VALUE_DEFAULT_TYPE, "com.example.task1.dto.TransactionDto");
+        props.put(JsonDeserializer.VALUE_DEFAULT_TYPE, "com.example.task1.model.dto.TransactionDto");
         props.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
         props.put(JsonDeserializer.USE_TYPE_INFO_HEADERS, false);
         props.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, sessionTimeout);
@@ -106,14 +108,8 @@ public class KafkaConfiguration<T> {
         return handler;
     }
 
-    @Bean("client")
-    @Primary
-    public KafkaTemplate<String, T> kafkaClientTemplate(@Qualifier("producerClientFactory") ProducerFactory<String, T> producerPatFactory) {
-        return new KafkaTemplate<>(producerPatFactory);
-    }
-
-    @Bean("producerClientFactory")
-    public ProducerFactory<String, T> producerClientFactory() {
+    @Bean
+    public ProducerFactory<String, TransactionResult> producerFactory() {
         Map<String, Object> props = new HashMap<>();
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, servers);
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
@@ -122,5 +118,10 @@ public class KafkaConfiguration<T> {
         props.put(ProducerConfig.RETRY_BACKOFF_MS_CONFIG, 1000);
         props.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, false);
         return new DefaultKafkaProducerFactory<>(props);
+    }
+
+    @Bean
+    public KafkaTemplate<String, TransactionResult> kafkaTemplate() {
+        return new KafkaTemplate<>(producerFactory());
     }
 }
