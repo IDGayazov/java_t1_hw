@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: t1-java-hw
+  profiles:
+    active: dev
+kafka:
+  bootstrap:
+    server: ${KAFKA_SERVER:localhost:9092}
+  producer:
+    enable: true
+    topic:
+      transactions-result-topic: t1_demo_transaction_result
+  consumer:
+    group-id: t1-demo
+    max.poll.records: 10
+    session-timeout: 10000
+    heartbeat.interval: 3000
+    topic:
+      transactions-accept: t1_demo_transaction_accept
+server:
+  port: 8086
+transaction:
+  limits:
+    max-count: 3
+    time-window: 60
