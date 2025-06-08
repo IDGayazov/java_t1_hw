@@ -71,7 +71,7 @@ public class TransactionServiceImpl implements TransactionService {
                 savedTransaction.getAccount().getClient().getClientId(),
                 account.getAccountId(),
                 savedTransaction.getId(),
-                savedTransaction.getTimestamp(),
+                savedTransaction.getTime(),
                 savedTransaction.getAmount(),
                 savedTransaction.getAccount().getBalance()
         );

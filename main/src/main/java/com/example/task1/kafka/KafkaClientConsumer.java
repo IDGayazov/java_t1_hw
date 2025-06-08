@@ -12,6 +12,7 @@ import com.example.task1.service.TransactionService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.Acknowledgment;
@@ -23,10 +24,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 
+import static com.example.task1.entity.enums.TransactionStatus.ACCEPTED;
+
 @Slf4j
 @RequiredArgsConstructor
 @Component
 public class KafkaClientConsumer {
+
+    @Value("${kafka.producer.topic.transactions-accept}")
+    private String transactionsAcceptTopic;
 
     private final TransactionRepository transactionRepository;
     private final AccountRepository accountRepository;
@@ -38,13 +44,13 @@ public class KafkaClientConsumer {
             topics = {"${kafka.consumer.topic.transactions-topic}"},
             containerFactory = "kafkaListenerContainerFactory")
     public void listener(@Payload TransactionDto message,
-                         Acknowledgment ack,
+                         @Header(KafkaHeaders.ACKNOWLEDGMENT) Acknowledgment ack,
                          @Header(KafkaHeaders.RECEIVED_TOPIC) String topic,
-                         @Header(KafkaHeaders.RECEIVED_KEY) String key) {
+                         @Header(value = KafkaHeaders.RECEIVED_KEY, required = false) String key) {
         log.debug("Transaction consumer: Обработка новых сообщений");
         try {
             ProcessedTransactionDto processedTransaction = transactionService.createTransaction(message);
-            kafkaTemplate.send("t1_demo_transaction_accept", processedTransaction);
+            kafkaTemplate.send(transactionsAcceptTopic, processedTransaction);
             ack.acknowledge();
             log.info("Transaction processed successfully: {}", processedTransaction);
         } catch (EntityNotFoundException e) {
@@ -57,40 +63,38 @@ public class KafkaClientConsumer {
     }
 
     @KafkaListener(
-            topics = "${kafka.consumer.transactions-accept}",
+            topics = "${kafka.consumer.topic.transactions-result-topic}",
             groupId = "${kafka.consumer.group-id}",
             containerFactory = "kafkaListenerContainerFactory"
     )
-    public void handleTransactionResult(@Payload Transaction result) {
+    public void handleTransactionResult(@Payload TransactionDto result) {
         log.info("Received transaction result: {}", result);
 
-        switch (result.getStatus()) {
-            case ACCEPTED -> handleAccepted(result);
-            case BLOCKED -> handleBlocked(result);
-            case REJECTED -> handleRejected(result);
-            default -> log.warn("Unknown status: {}", result.getStatus());
+        switch (result.status()) {
+            case "ACCEPTED" -> handleAccepted(result);
+            case "BLOCKED" -> handleBlocked(result);
+            case "REJECTED" -> handleRejected(result);
+            default -> log.warn("Unknown status: {}", result.status());
         }
     }
 
     @Transactional
-    private void handleAccepted(Transaction result) {
-        transactionRepository.findById(result.getTransactionId())
+    private void handleAccepted(TransactionDto result) {
+        transactionRepository.findById(result.transactionId())
                 .ifPresent(transaction -> {
-                    transaction.setStatus(TransactionStatus.ACCEPTED);
+                    transaction.setStatus(ACCEPTED);
                     transactionRepository.save(transaction);
-                    log.info("Transaction {} accepted", result.getTransactionId());
+                    log.info("Transaction {} accepted", result.transactionId());
                 });
     }
 
     @Transactional
-    private void handleBlocked(Transaction result) {
-        transactionRepository.findById(result.getTransactionId())
+    private void handleBlocked(TransactionDto result) {
+        transactionRepository.findById(result.transactionId())
                 .ifPresent(transaction -> {
-                    // Обновляем статус транзакции
                     transaction.setStatus(TransactionStatus.BLOCKED);
                     transactionRepository.save(transaction);
 
-                    // Блокируем счет и замораживаем средства
                     Account account = transaction.getAccount();
                     account.setAccountStatus(AccountStatus.BLOCKED);
 
@@ -102,25 +106,23 @@ public class KafkaClientConsumer {
                     accountRepository.save(account);
 
                     log.info("Transaction {} blocked. Account {} frozen. Frozen amount: {}",
-                            result.getTransactionId(), account.getId(), newFrozenAmount);
+                            result.transactionId(), account.getId(), newFrozenAmount);
                 });
     }
 
     @Transactional
-    private void handleRejected(Transaction result) {
-        transactionRepository.findById(result.getTransactionId())
+    private void handleRejected(TransactionDto result) {
+        transactionRepository.findById(result.transactionId())
                 .ifPresent(transaction -> {
-                    // Обновляем статус транзакции
                     transaction.setStatus(TransactionStatus.REJECTED);
                     transactionRepository.save(transaction);
 
-                    // Возвращаем средства на счет
                     Account account = transaction.getAccount();
                     account.setBalance(account.getBalance().add(transaction.getAmount()));
                     accountRepository.save(account);
 
                     log.info("Transaction {} rejected. Balance returned for account {}",
-                            result.getTransactionId(), account.getId());
+                            result.transactionId(), account.getId());
                 });
     }
 }

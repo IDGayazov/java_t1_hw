@@ -3,7 +3,9 @@ package com.example.task1.util;
 import com.example.task1.entity.Account;
 import com.example.task1.entity.Client;
 import com.example.task1.entity.Transaction;
+import com.example.task1.entity.enums.AccountStatus;
 import com.example.task1.entity.enums.AccountType;
+import com.example.task1.entity.enums.TransactionStatus;
 import com.example.task1.mapper.AccountMapper;
 import com.example.task1.mapper.ClientMapper;
 import com.example.task1.mapper.TransactionMapper;
@@ -88,18 +90,27 @@ public class DataGenerator implements CommandLineRunner {
                 .balance(BigDecimal.valueOf(1234.3))
                 .accountType(AccountType.valueOf("DEBIT"))
                 .client(clients.get(0))
+                .accountId(167L)
+                .accountStatus(AccountStatus.OPEN)
+                .frozenAmount(BigDecimal.valueOf(0.0))
                 .build();
 
         Account account2 = Account.builder()
                 .balance(BigDecimal.valueOf(1234.34))
                 .accountType(AccountType.valueOf("CREDIT"))
                 .client(clients.get(1))
+                .accountId(137L)
+                .accountStatus(AccountStatus.OPEN)
+                .frozenAmount(BigDecimal.valueOf(0.0))
                 .build();
 
         Account account3 = Account.builder()
                 .balance(BigDecimal.valueOf(345.34))
                 .accountType(AccountType.valueOf("DEBIT"))
                 .client(clients.get(2))
+                .accountId(169L)
+                .frozenAmount(BigDecimal.valueOf(0.0))
+                .accountStatus(AccountStatus.OPEN)
                 .build();
 
         accountRepository.saveAll(List.of(account1, account2, account3));
@@ -111,18 +122,24 @@ public class DataGenerator implements CommandLineRunner {
                 .account(accounts.get(0))
                 .amount(BigDecimal.valueOf(123.4))
                 .time(LocalDateTime.now())
+                .transactionId(126L)
+                .status(TransactionStatus.ACCEPTED)
                 .build();
 
         Transaction transaction2 = Transaction.builder()
                 .account(accounts.get(1))
                 .amount(BigDecimal.valueOf(345.7))
                 .time(LocalDateTime.now())
+                .transactionId(123L)
+                .status(TransactionStatus.ACCEPTED)
                 .build();
 
         Transaction transaction3 = Transaction.builder()
                 .account(accounts.get(2))
                 .amount(BigDecimal.valueOf(1234.3))
                 .time(LocalDateTime.now())
+                .transactionId(232L)
+                .status(TransactionStatus.ACCEPTED)
                 .build();
 
         transactionRepository.saveAll(List.of(transaction1, transaction2, transaction3));

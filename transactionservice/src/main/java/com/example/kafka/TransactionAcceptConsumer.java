@@ -24,14 +24,13 @@ public class TransactionAcceptConsumer {
     )
     public void listenTransactionAccept(
             @Payload TransactionDto transaction,
-            @Header(KafkaHeaders.RECEIVED_KEY) String key
+            @Header(value = KafkaHeaders.RECEIVED_KEY, required = false) String key
     ) {
         log.info("Received transaction for processing: {}", transaction);
         try {
             processorService.processTransaction(transaction);
         } catch (Exception e) {
             log.error("Error processing transaction: {}", e.getMessage());
-            // Можно добавить обработку ошибок и отправку в DLQ
         }
     }
 }

@@ -47,10 +47,7 @@ public class Transaction {
     @Column(name="transaction_id")
     private Long transactionId;
 
-    @Column(name="ttime")
-    private LocalDateTime timestamp;
-
-    @Column(name="status")
+    @Column(name="transaction_status")
     @Enumerated(EnumType.STRING)
     private TransactionStatus status;
 

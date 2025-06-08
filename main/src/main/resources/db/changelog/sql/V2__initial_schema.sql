@@ -35,9 +35,8 @@ CREATE TABLE financial_transaction(
     id BIGINT NOT NULL PRIMARY KEY DEFAULT nextval('transaction_seq'),
     amount DECIMAL(13, 2) NOT NULL,
     transaction_time TIMESTAMP NOT NULL,
-    transaction_status VARCHAR(30) NOT NULL,
+    transaction_status VARCHAR(30),
     transaction_id BIGINT NOT NULL UNIQUE,
-    ttime TIMESTAMP NOT NULL,
     account_id BIGINT NOT NULL,
     CONSTRAINT fk_financial_transaction_account FOREIGN KEY (account_id) REFERENCES account(id)
 );

@@ -35,8 +35,6 @@ public class KafkaConfiguration<T> {
 
     @Value("${kafka.bootstrap.server}")
     private String servers;
-    @Value("${kafka.topic.client-topic}")
-    private String clientTopic;
 
     @Value("${kafka.consumer.group-id}")
     private String groupId;

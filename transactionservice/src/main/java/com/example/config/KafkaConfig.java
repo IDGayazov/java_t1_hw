@@ -37,8 +37,6 @@ public class KafkaConfig {
 
     @Value("${kafka.bootstrap.server}")
     private String servers;
-    @Value("${kafka.topic.client-topic}")
-    private String clientTopic;
 
     @Value("${kafka.consumer.group-id}")
     private String groupId;
@@ -52,8 +50,6 @@ public class KafkaConfig {
     private String maxPollIntervalsMs;
     @Value("${kafka.consumer.heartbeat.interval}")
     private String heartbeatInterval;
-    @Value("${kafka.consumer.topic.transactions-topic}")
-    private String clientConsumerTopic;
 
     @Bean
     public ConsumerFactory<String, TransactionDto> consumerListenerFactory() {
@@ -62,7 +58,7 @@ public class KafkaConfig {
         props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, MessageDeserializer.class);
-        props.put(JsonDeserializer.VALUE_DEFAULT_TYPE, "com.example.task1.model.dto.TransactionDto");
+        props.put(JsonDeserializer.VALUE_DEFAULT_TYPE, "com.example.model.dto.TransactionDto");
         props.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
         props.put(JsonDeserializer.USE_TYPE_INFO_HEADERS, false);
         props.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, sessionTimeout);

@@ -10,7 +10,7 @@ import org.mapstruct.Mapping;
 public interface TransactionMapper {
     @Mapping(target="id", ignore=true)
     @Mapping(target="time", ignore=true)
-    @Mapping(target = "status", expression = "java(TransactionStatus.valueOf(dto.status()))")
+    @Mapping(target = "status", ignore=true)
     Transaction toEntity(TransactionDto dto);
 
     @Mapping(target="accountId", expression = "java(entity.getAccount().getId())")

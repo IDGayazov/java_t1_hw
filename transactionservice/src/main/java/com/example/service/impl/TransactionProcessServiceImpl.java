@@ -1,31 +1,30 @@
 package com.example.service.impl;
 
-import com.example.model.Account;
-import com.example.model.Transaction;
 import com.example.model.TransactionResult;
 import com.example.model.dto.TransactionDto;
 import com.example.model.enums.TransactionStatus;
-import com.example.repository.AccountRepository;
-import com.example.repository.TransactionRepository;
-import jakarta.persistence.EntityNotFoundException;
+import com.example.service.TransactionProcessService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class TransactionProcessServiceImpl {
+public class TransactionProcessServiceImpl implements TransactionProcessService {
 
-    private final TransactionRepository transactionRepository;
-    private final AccountRepository accountRepository;
     private final KafkaTemplate<String, TransactionResult> kafkaTemplate;
+
+    @Value("${kafka.producer.topic.transactions-result-topic}")
+    private String transactionsResultTopic;
 
     @Value("${transaction.limits.max-count}")
     private int maxTransactionCount;
@@ -33,78 +32,78 @@ public class TransactionProcessServiceImpl {
     @Value("${transaction.limits.time-window}")
     private long timeWindowSeconds;
 
-    @Transactional
-    public void processTransaction(TransactionDto transactionDto) {
-        Account account = accountRepository.findById(transactionDto.accountId())
-                .orElseThrow(() -> new EntityNotFoundException("Account not found"));
+    private final Map<Long, Queue<TransactionDto>> transactionStore = new ConcurrentHashMap<>();
 
-        // Проверка 1: Лимит количества транзакций
-        if (checkTransactionLimit(account, transactionDto)) {
-            blockTransactions(account);
+    public void processTransaction(TransactionDto transactionDto) {
+        if (checkTransactionLimit(transactionDto.clientId(), transactionDto)) {
+            blockTransactions(transactionDto.clientId());
             return;
         }
 
-        // Проверка 2: Достаточно ли средств
-        if (transactionDto.transactionAmount().compareTo(account.getBalance()) > 0) {
+        if (transactionDto.transactionAmount().compareTo(transactionDto.accountBalance()) > 0) {
             sendRejectedResult(transactionDto, "Insufficient funds");
             return;
         }
 
-        // Успешная обработка
-        updateTransactionStatus(transactionDto.transactionId(), TransactionStatus.ACCEPTED);
+        addTransactionToStore(transactionDto);
         sendAcceptedResult(transactionDto);
     }
 
-    private boolean checkTransactionLimit(Account account, TransactionDto currentTransaction) {
-        LocalDateTime startTime = LocalDateTime.now().minusSeconds(timeWindowSeconds);
+    private boolean checkTransactionLimit(Long clientId, TransactionDto currentTransaction) {
+        Queue<TransactionDto> clientTransactions = transactionStore.getOrDefault(clientId, new LinkedList<>());
 
-        long transactionCount = transactionRepository.countByAccountAndTimeAfter(
-                account,
-                startTime
-        );
+        LocalDateTime windowStart = LocalDateTime.now().minusSeconds(timeWindowSeconds);
+        while (!clientTransactions.isEmpty() &&
+                clientTransactions.peek().timestamp().isBefore(windowStart)) {
+            clientTransactions.poll();
+        }
 
-        return transactionCount >= maxTransactionCount &&
-                currentTransaction.timestamp().isAfter(startTime);
+        System.out.println(clientTransactions.size() >= maxTransactionCount);
+        System.out.println(currentTransaction.timestamp().isAfter(windowStart));
+
+        return clientTransactions.size() >= maxTransactionCount &&
+                currentTransaction.timestamp().isAfter(windowStart);
     }
 
-    private void blockTransactions(Account account) {
-        LocalDateTime startTime = LocalDateTime.now().minusSeconds(timeWindowSeconds);
+    private void blockTransactions(Long clientId) {
+        Queue<TransactionDto> clientTransactions = transactionStore.get(clientId);
+        if (clientTransactions == null) return;
 
-        List<Transaction> recentTransactions = transactionRepository
-                .findByAccountAndTimeAfterAndStatus(
-                        account,
-                        startTime,
-                        TransactionStatus.REQUESTED
-                );
+        LocalDateTime windowStart = LocalDateTime.now().minusSeconds(timeWindowSeconds);
 
-        recentTransactions.forEach(transaction -> {
-            transaction.setStatus(TransactionStatus.BLOCKED);
-            transactionRepository.save(transaction);
+        clientTransactions.stream()
+                .filter(tx -> tx.timestamp().isAfter(windowStart))
+                .forEach(this::sendBlockedResult);
+    }
 
-            sendBlockedResult(transaction);
+    private void addTransactionToStore(TransactionDto transactionDto) {
+        transactionStore.compute(transactionDto.clientId(), (key, queue) -> {
+            if (queue == null) {
+                queue = new LinkedList<>();
+            }
+            queue.add(transactionDto);
+            return queue;
         });
     }
 
-    private void sendBlockedResult(Transaction transaction) {
+    private void sendBlockedResult(TransactionDto dto) {
         TransactionResult result = new TransactionResult(
-                transaction.getAccount().getId(),
-                transaction.getId(),
+                dto.accountId(),
+                dto.transactionId(),
                 TransactionStatus.BLOCKED,
                 "Transaction blocked: limit exceeded"
         );
-        kafkaTemplate.send("t1_demo_transaction_result", result);
+        kafkaTemplate.send(transactionsResultTopic, result);
     }
 
     private void sendRejectedResult(TransactionDto dto, String reason) {
-        updateTransactionStatus(dto.transactionId(), TransactionStatus.REJECTED);
-
         TransactionResult result = new TransactionResult(
                 dto.accountId(),
                 dto.transactionId(),
                 TransactionStatus.REJECTED,
                 reason
         );
-        kafkaTemplate.send("t1_demo_transaction_result", result);
+        kafkaTemplate.send(transactionsResultTopic, result);
     }
 
     private void sendAcceptedResult(TransactionDto dto) {
@@ -114,13 +113,6 @@ public class TransactionProcessServiceImpl {
                 TransactionStatus.ACCEPTED,
                 "Transaction accepted"
         );
-        kafkaTemplate.send("t1_demo_transaction_result", result);
-    }
-
-    private void updateTransactionStatus(Long transactionId, TransactionStatus status) {
-        transactionRepository.findById(transactionId).ifPresent(transaction -> {
-            transaction.setStatus(status);
-            transactionRepository.save(transaction);
-        });
+        kafkaTemplate.send(transactionsResultTopic, result);
     }
 }

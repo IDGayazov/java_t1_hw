@@ -13,14 +13,14 @@ spring:
   liquibase:
     enabled: true
     change-log: classpath:db/changelog/db.changelog-master.xml
-
 kafka:
   bootstrap:
     server: ${KAFKA_SERVER:localhost:9092}
   producer:
     enable: true
-  topic:
-    client-topic: t1_demo_metrics
+    topic:
+      client-topic: t1_demo_metrics
+      transactions-accept: t1_demo_transaction_accept
   consumer:
     group-id: t1-demo
     max.poll.records: 10
@@ -28,7 +28,6 @@ kafka:
     heartbeat.interval: 3000
     topic:
       transactions-topic: t1_demo_transactions
-      transactions-accept: t1_demo_transaction_accept
 
 server:
   port: 8085
