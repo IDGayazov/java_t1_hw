@@ -29,6 +29,10 @@ kafka:
     topic:
       transactions-topic: t1_demo_transactions
 
+token:
+  signing:
+    key:
+
 server:
   port: 8085
 
