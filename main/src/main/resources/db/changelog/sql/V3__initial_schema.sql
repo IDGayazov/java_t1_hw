@@ -27,7 +27,7 @@ CREATE TABLE client(
     last_name VARCHAR(50),
     middle_name VARCHAR(50),
     status VARCHAR(20),
-    client_id BIGINT NOT NULL UNIQUE
+    client_id BIGINT NOT NULL UNIQUE,
     user_id BIGINT NOT NULL,
     CONSTRAINT fk_user_client FOREIGN KEY (user_id) REFERENCES users(id)
 );

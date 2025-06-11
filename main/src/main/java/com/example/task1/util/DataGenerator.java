@@ -3,6 +3,7 @@ package com.example.task1.util;
 import com.example.task1.entity.Account;
 import com.example.task1.entity.Client;
 import com.example.task1.entity.Transaction;
+import com.example.task1.entity.User;
 import com.example.task1.entity.enums.AccountStatus;
 import com.example.task1.entity.enums.AccountType;
 import com.example.task1.entity.enums.TransactionStatus;
@@ -12,6 +13,7 @@ import com.example.task1.mapper.TransactionMapper;
 import com.example.task1.repository.AccountRepository;
 import com.example.task1.repository.ClientRepository;
 import com.example.task1.repository.TransactionRepository;
+import com.example.task1.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -36,6 +38,7 @@ public class DataGenerator implements CommandLineRunner {
     private final TransactionRepository transactionRepository;
     private final AccountRepository accountRepository;
     private final ClientRepository clientRepository;
+    private final UserRepository userRepository;
 
     private final ClientMapper clientMapper;
     private final TransactionMapper transactionMapper;
@@ -45,11 +48,42 @@ public class DataGenerator implements CommandLineRunner {
     private List<Account> accounts = new ArrayList<>();
 
     private void saveClients(){
+        User user1 = User.builder()
+                .login("ivan")
+                .email("ivan@mail.com")
+                .password("$2a$10$YlAA8IGBoyMOayVHH.QIyeqsoz8uOub8lJUr90bUKsk7NszxQF2NK")
+                .build();
+
+        User user2 = User.builder()
+                .login("igor")
+                .email("igor@mail.com")
+                .password("$2a$10$YlAA8IGBoyMOayVHH.QIyeqsoz8uOub8lJUr90bUKsk7NszxQF2NK")
+                .build();
+
+        User user3 = User.builder()
+                .login("andrey")
+                .email("andrey@mail.com")
+                .password("$2a$10$YlAA8IGBoyMOayVHH.QIyeqsoz8uOub8lJUr90bUKsk7NszxQF2NK")
+                .build();
+
+        User user4 = User.builder()
+                .login("aleksey")
+                .email("aleksey@mail.com")
+                .password("$2a$10$YlAA8IGBoyMOayVHH.QIyeqsoz8uOub8lJUr90bUKsk7NszxQF2NK")
+                .build();
+
+        User user5 = User.builder()
+                .login("matvey")
+                .email("matvey@mail.co")
+                .password("$2a$10$YlAA8IGBoyMOayVHH.QIyeqsoz8uOub8lJUr90bUKsk7NszxQF2NK")
+                .build();
+
         Client client1 = Client.builder()
                 .firstName("Ivan")
                 .lastName("Ivanov")
                 .middleName("Ivanovich")
                 .clientId(234L)
+                .user(user1)
                 .build();
 
         Client client2 = Client.builder()
@@ -57,6 +91,7 @@ public class DataGenerator implements CommandLineRunner {
                 .lastName("Sergeev")
                 .middleName("Semenovich")
                 .clientId(189L)
+                .user(user2)
                 .build();
 
         Client client3 = Client.builder()
@@ -64,6 +99,7 @@ public class DataGenerator implements CommandLineRunner {
                 .lastName("Dmitriev")
                 .middleName("Sergeevich")
                 .clientId(178L)
+                .user(user3)
                 .build();
 
         Client client4 = Client.builder()
@@ -71,6 +107,7 @@ public class DataGenerator implements CommandLineRunner {
                 .lastName("Gomonov")
                 .middleName("Viktotovich")
                 .clientId(153L)
+                .user(user4)
                 .build();
 
         Client client5 = Client.builder()
@@ -78,8 +115,10 @@ public class DataGenerator implements CommandLineRunner {
                 .lastName("Maksimov")
                 .middleName("Ivanovich")
                 .clientId(156L)
+                .user(user5)
                 .build();
 
+        userRepository.saveAll(List.of(user1, user2, user3, user4, user5));
         clientRepository.saveAll(List.of(client1, client2, client3, client4, client5));
 
         clients.addAll(List.of(client2, client3, client5));

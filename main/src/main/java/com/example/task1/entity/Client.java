@@ -1,5 +1,6 @@
 package com.example.task1.entity;
 
+import com.example.task1.entity.enums.ClientStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -51,7 +52,7 @@ public class Client {
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
-    private String clientStatus;
+    private ClientStatus clientStatus;
 
     @Column(name = "client_id")
     private Long clientId;

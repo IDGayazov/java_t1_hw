@@ -91,12 +91,6 @@ public class AuthServiceImpl implements AuthService {
                         roles.add(adminRole);
 
                         break;
-                    case "mod":
-                        Role modRole = roleRepository.findByName(RoleEnum.ROLE_MODERATOR)
-                                .orElseThrow(() -> new EntityNotFoundException("Error: Role is not found."));
-                        roles.add(modRole);
-
-                        break;
                     default:
                         Role userRole = roleRepository.findByName(RoleEnum.ROLE_USER)
                                 .orElseThrow(() -> new EntityNotFoundException("Error: Role is not found."));

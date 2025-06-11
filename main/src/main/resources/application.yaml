@@ -32,6 +32,7 @@ kafka:
 token:
   signing:
     key:
+  expiration: 100
 
 server:
   port: 8085

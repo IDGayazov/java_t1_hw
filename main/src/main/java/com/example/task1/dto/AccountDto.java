@@ -8,6 +8,7 @@ public record AccountDto(
         String accountType,
         Long clientId,
         String accountStatus,
-        Long frozenAmount
+        BigDecimal frozenAmount,
+        Long accountId
 ) {
 }
