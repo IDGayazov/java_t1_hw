@@ -1,7 +1,9 @@
 package com.example.task1.repository;
 
 import com.example.task1.annotation.Cached;
+import com.example.task1.entity.Account;
 import com.example.task1.entity.Transaction;
+import com.example.task1.entity.enums.TransactionStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -16,5 +18,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
 
     @Cached
     List<Transaction> findAll();
+
+    long countByAccountAndStatus(Account account, TransactionStatus status);
 
 }
