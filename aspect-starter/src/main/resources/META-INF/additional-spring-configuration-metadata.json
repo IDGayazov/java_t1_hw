@@ -1,70 +1,118 @@
 {
   "groups": [
     {
-      "name": "kafka",
-      "type": "com.example.config.KafkaProperties",
-      "sourceType": "com.example.config.KafkaProperties",
-      "sourceMethod": "kafkaProperties",
-      "members": [
-        {
-          "name": "kafka.bootstrap.server",
-          "type": "java.lang.String",
-          "description": "Адрес Kafka bootstrap сервера.",
-          "sourceType": "com.example.config.KafkaProperties"
-        },
-        {
-          "name": "kafka.producer.retries",
-          "type": "java.lang.Integer",
-          "description": "Количество попыток при отправке сообщений Kafka.",
-          "sourceType": "com.example.config.KafkaProperties"
-        },
-        {
-          "name": "kafka.producer.acks",
-          "type": "java.lang.String",
-          "description": "Уровень подтверждения записи в Kafka (например 'all', '1', 'none').",
-          "sourceType": "com.example.config.KafkaProperties"
-        },
-        {
-          "name": "kafka.producer.topic.client-topic",
-          "type": "java.lang.String",
-          "description": "Название топика Kafka для клиентских событий.",
-          "sourceType": "com.example.config.KafkaProperties"
-        }
-      ]
+      "name": "app",
+      "type": "java.lang.Object",
+      "description": "Application configuration properties"
     },
     {
-      "name": "spring.datasource",
-      "type": "org.springframework.boot.autoconfigure.jdbc.DataSourceProperties",
-      "sourceType": "org.springframework.boot.autoconfigure.jdbc.DataSourceProperties"
+      "name": "app.time",
+      "type": "java.lang.Object",
+      "description": "Time-related configuration properties"
     },
     {
-      "name": "app.time.limit-ms",
-      "type": "java.lang.Long",
-      "sourceType": "com.example.config.AppProperties",
-      "description": "Максимальное время выполнения операции в миллисекундах."
+      "name": "error",
+      "type": "java.lang.Object",
+      "description": "Error handling configuration"
+    },
+    {
+      "name": "error.logging",
+      "type": "java.lang.Object",
+      "description": "Error logging configuration"
+    },
+    {
+      "name": "error.logging.kafka",
+      "type": "java.lang.Object",
+      "description": "Kafka error logging configuration"
+    },
+    {
+      "name": "error.logging.kafka.producer",
+      "type": "java.lang.Object",
+      "description": "Kafka producer configuration for error logging"
     },
     {
       "name": "error.logging.db",
-      "type": "com.example.config.ErrorLoggingDbProperties",
-      "sourceType": "com.example.config.ErrorLoggingDbProperties",
-      "members": [
+      "type": "java.lang.Object",
+      "description": "Database error logging configuration"
+    }
+  ],
+  "properties": [
+    {
+      "name": "app.time.limit-ms",
+      "type": "java.lang.Long",
+      "description": "Time limit in milliseconds for operations",
+      "sourceType": "java.lang.Long"
+    },
+    {
+      "name": "error.logging.kafka.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Whether Kafka error logging is enabled",
+      "defaultValue": false,
+      "sourceType": "java.lang.Boolean"
+    },
+    {
+      "name": "error.logging.kafka.bootstrap-servers",
+      "type": "java.lang.String",
+      "description": "Kafka bootstrap servers (comma-separated list)",
+      "sourceType": "java.lang.String"
+    },
+    {
+      "name": "error.logging.kafka.topic",
+      "type": "java.lang.String",
+      "description": "Kafka topic for error logs",
+      "sourceType": "java.lang.String"
+    },
+    {
+      "name": "error.logging.kafka.producer.retries",
+      "type": "java.lang.Integer",
+      "description": "Number of retries for Kafka producer",
+      "defaultValue": 3,
+      "sourceType": "java.lang.Integer"
+    },
+    {
+      "name": "error.logging.kafka.producer.acks",
+      "type": "java.lang.String",
+      "description": "Number of acknowledgments the producer requires",
+      "defaultValue": "all",
+      "sourceType": "java.lang.String"
+    },
+    {
+      "name": "error.logging.db.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Whether database error logging is enabled",
+      "defaultValue": true,
+      "sourceType": "java.lang.Boolean"
+    },
+    {
+      "name": "error.logging.db.schema-validation",
+      "type": "java.lang.Boolean",
+      "description": "Whether to validate database schema on startup",
+      "defaultValue": true,
+      "sourceType": "java.lang.Boolean"
+    },
+    {
+      "name": "error.logging.db.auto-create-tables",
+      "type": "java.lang.Boolean",
+      "description": "Whether to automatically create required tables if missing",
+      "defaultValue": true,
+      "sourceType": "java.lang.Boolean"
+    }
+  ],
+  "hints": [
+    {
+      "name": "error.logging.kafka.producer.acks",
+      "values": [
         {
-          "name": "error.logging.db.enabled",
-          "type": "java.lang.Boolean",
-          "description": "Включить логирование ошибок в БД.",
-          "defaultValue": false
+          "value": "all",
+          "description": "Wait for all in-sync replicas to acknowledge"
         },
         {
-          "name": "error.logging.db.schema-validation",
-          "type": "java.lang.Boolean",
-          "description": "Проверять структуру таблиц при старте.",
-          "defaultValue": true
+          "value": "1",
+          "description": "Wait only for the leader to acknowledge"
         },
         {
-          "name": "error.logging.db.auto-create-tables",
-          "type": "java.lang.Boolean",
-          "description": "Автоматически создавать таблицы и последовательности, если они отсутствуют.",
-          "defaultValue": false
+          "value": "0",
+          "description": "Don't wait for any acknowledgment"
         }
       ]
     }
