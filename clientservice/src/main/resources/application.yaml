@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: t1-java-hw
+  profiles:
+    active: dev
+
+server:
+  port: 8087
+token:
+  signing:
+    key:
