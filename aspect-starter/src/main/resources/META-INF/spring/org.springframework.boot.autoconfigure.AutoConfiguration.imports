@@ -1,0 +1,4 @@
+com.example.starter.config.JdbcConfig
+com.example.starter.config.JdbcServiceConfig
+com.example.starter.config.AspectLoggingAutoConfiguration
+com.example.starter.config.KafkaProducerConfig

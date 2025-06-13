@@ -1,0 +1,72 @@
+{
+  "groups": [
+    {
+      "name": "kafka",
+      "type": "com.example.config.KafkaProperties",
+      "sourceType": "com.example.config.KafkaProperties",
+      "sourceMethod": "kafkaProperties",
+      "members": [
+        {
+          "name": "kafka.bootstrap.server",
+          "type": "java.lang.String",
+          "description": "Адрес Kafka bootstrap сервера.",
+          "sourceType": "com.example.config.KafkaProperties"
+        },
+        {
+          "name": "kafka.producer.retries",
+          "type": "java.lang.Integer",
+          "description": "Количество попыток при отправке сообщений Kafka.",
+          "sourceType": "com.example.config.KafkaProperties"
+        },
+        {
+          "name": "kafka.producer.acks",
+          "type": "java.lang.String",
+          "description": "Уровень подтверждения записи в Kafka (например 'all', '1', 'none').",
+          "sourceType": "com.example.config.KafkaProperties"
+        },
+        {
+          "name": "kafka.producer.topic.client-topic",
+          "type": "java.lang.String",
+          "description": "Название топика Kafka для клиентских событий.",
+          "sourceType": "com.example.config.KafkaProperties"
+        }
+      ]
+    },
+    {
+      "name": "spring.datasource",
+      "type": "org.springframework.boot.autoconfigure.jdbc.DataSourceProperties",
+      "sourceType": "org.springframework.boot.autoconfigure.jdbc.DataSourceProperties"
+    },
+    {
+      "name": "app.time.limit-ms",
+      "type": "java.lang.Long",
+      "sourceType": "com.example.config.AppProperties",
+      "description": "Максимальное время выполнения операции в миллисекундах."
+    },
+    {
+      "name": "error.logging.db",
+      "type": "com.example.config.ErrorLoggingDbProperties",
+      "sourceType": "com.example.config.ErrorLoggingDbProperties",
+      "members": [
+        {
+          "name": "error.logging.db.enabled",
+          "type": "java.lang.Boolean",
+          "description": "Включить логирование ошибок в БД.",
+          "defaultValue": false
+        },
+        {
+          "name": "error.logging.db.schema-validation",
+          "type": "java.lang.Boolean",
+          "description": "Проверять структуру таблиц при старте.",
+          "defaultValue": true
+        },
+        {
+          "name": "error.logging.db.auto-create-tables",
+          "type": "java.lang.Boolean",
+          "description": "Автоматически создавать таблицы и последовательности, если они отсутствуют.",
+          "defaultValue": false
+        }
+      ]
+    }
+  ]
+}

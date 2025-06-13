@@ -60,11 +60,11 @@ public class SecurityConfig {
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth ->
-                        auth.requestMatchers("/api/auth/**").anonymous()
-                                .requestMatchers("/api/v1/clients**").permitAll()
-                                .requestMatchers("/api/v1/accounts").permitAll()
-                                .requestMatchers("/api/v1/transactions").permitAll()
-                                .anyRequest().permitAll()
+                        auth.requestMatchers("/api/v1/auth/**").anonymous()
+                                .requestMatchers("/api/v1/clients**").authenticated()
+                                .requestMatchers("/api/v1/accounts**").authenticated()
+                                .requestMatchers("/api/v1/transactions**").authenticated()
+                                .anyRequest().authenticated()
                 );
 
         http.authenticationProvider(authenticationProvider());

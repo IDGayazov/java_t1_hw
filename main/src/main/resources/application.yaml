@@ -37,6 +37,13 @@ token:
 server:
   port: 8085
 
+error:
+  logging:
+    db:
+      enabled: true
+      schema-validation: true
+      auto-create-tables: true
+
 app:
   data:
     cache-time-min: 2

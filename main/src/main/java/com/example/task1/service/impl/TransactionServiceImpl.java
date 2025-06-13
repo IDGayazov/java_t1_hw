@@ -1,7 +1,7 @@
 package com.example.task1.service.impl;
 
-import com.example.task1.annotation.LoggingException;
-import com.example.task1.annotation.Metric;
+import com.example.starter.annotation.LoggingException;
+import com.example.starter.annotation.Metric;
 import com.example.task1.dto.ProcessedTransactionDto;
 import com.example.task1.dto.TransactionDto;
 import com.example.task1.entity.Account;
@@ -14,7 +14,6 @@ import com.example.task1.mapper.TransactionMapper;
 import com.example.task1.repository.AccountRepository;
 import com.example.task1.repository.ClientRepository;
 import com.example.task1.repository.TransactionRepository;
-import com.example.task1.service.ClientService;
 import com.example.task1.service.TransactionService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;

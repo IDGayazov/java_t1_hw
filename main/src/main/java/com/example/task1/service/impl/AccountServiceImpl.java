@@ -1,6 +1,7 @@
 package com.example.task1.service.impl;
 
-import com.example.task1.annotation.LoggingException;
+
+import com.example.starter.annotation.LoggingException;
 import com.example.task1.dto.AccountDto;
 import com.example.task1.entity.Account;
 import com.example.task1.entity.Client;

@@ -1,6 +1,6 @@
 package com.example.task1.repository;
 
-import com.example.task1.annotation.Cached;
+import com.example.starter.annotation.Cached;
 import com.example.task1.entity.Account;
 import com.example.task1.entity.Transaction;
 import com.example.task1.entity.enums.TransactionStatus;

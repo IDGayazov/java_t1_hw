@@ -3,7 +3,6 @@ package com.example.task1.kafka;
 import com.example.task1.dto.ProcessedTransactionDto;
 import com.example.task1.dto.TransactionDto;
 import com.example.task1.entity.Account;
-import com.example.task1.entity.Transaction;
 import com.example.task1.entity.enums.AccountStatus;
 import com.example.task1.entity.enums.TransactionStatus;
 import com.example.task1.repository.AccountRepository;
