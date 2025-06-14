@@ -6,6 +6,7 @@ import com.example.task1.entity.Transaction;
 import com.example.task1.entity.User;
 import com.example.task1.entity.enums.AccountStatus;
 import com.example.task1.entity.enums.AccountType;
+import com.example.task1.entity.enums.ClientStatus;
 import com.example.task1.entity.enums.TransactionStatus;
 import com.example.task1.mapper.AccountMapper;
 import com.example.task1.mapper.ClientMapper;
@@ -84,6 +85,7 @@ public class DataGenerator implements CommandLineRunner {
                 .middleName("Ivanovich")
                 .clientId(234L)
                 .user(user1)
+                .clientStatus(ClientStatus.BLOCKED)
                 .build();
 
         Client client2 = Client.builder()
@@ -92,6 +94,7 @@ public class DataGenerator implements CommandLineRunner {
                 .middleName("Semenovich")
                 .clientId(189L)
                 .user(user2)
+                .clientStatus(ClientStatus.BLOCKED)
                 .build();
 
         Client client3 = Client.builder()
@@ -100,6 +103,7 @@ public class DataGenerator implements CommandLineRunner {
                 .middleName("Sergeevich")
                 .clientId(178L)
                 .user(user3)
+                .clientStatus(ClientStatus.BLOCKED)
                 .build();
 
         Client client4 = Client.builder()
@@ -108,6 +112,7 @@ public class DataGenerator implements CommandLineRunner {
                 .middleName("Viktotovich")
                 .clientId(153L)
                 .user(user4)
+                .clientStatus(ClientStatus.BLOCKED)
                 .build();
 
         Client client5 = Client.builder()
@@ -116,6 +121,7 @@ public class DataGenerator implements CommandLineRunner {
                 .middleName("Ivanovich")
                 .clientId(156L)
                 .user(user5)
+                .clientStatus(ClientStatus.BLOCKED)
                 .build();
 
         userRepository.saveAll(List.of(user1, user2, user3, user4, user5));
@@ -130,7 +136,7 @@ public class DataGenerator implements CommandLineRunner {
                 .accountType(AccountType.valueOf("DEBIT"))
                 .client(clients.get(0))
                 .accountId(167L)
-                .accountStatus(AccountStatus.OPEN)
+                .accountStatus(AccountStatus.ARRESTED)
                 .frozenAmount(BigDecimal.valueOf(0.0))
                 .build();
 
@@ -139,7 +145,7 @@ public class DataGenerator implements CommandLineRunner {
                 .accountType(AccountType.valueOf("CREDIT"))
                 .client(clients.get(1))
                 .accountId(137L)
-                .accountStatus(AccountStatus.OPEN)
+                .accountStatus(AccountStatus.ARRESTED)
                 .frozenAmount(BigDecimal.valueOf(0.0))
                 .build();
 
@@ -149,7 +155,7 @@ public class DataGenerator implements CommandLineRunner {
                 .client(clients.get(2))
                 .accountId(169L)
                 .frozenAmount(BigDecimal.valueOf(0.0))
-                .accountStatus(AccountStatus.OPEN)
+                .accountStatus(AccountStatus.ARRESTED)
                 .build();
 
         accountRepository.saveAll(List.of(account1, account2, account3));

@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: t1-java-hw
+  profiles:
+    active: dev
+
+server:
+  port: 8089
+
+token:
+  signing:
+    key:
+  expiration: 100000

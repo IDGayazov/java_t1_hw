@@ -61,10 +61,10 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth ->
                         auth.requestMatchers("/api/v1/auth/**").anonymous()
-                                .requestMatchers("/api/v1/clients**").authenticated()
-                                .requestMatchers("/api/v1/accounts**").authenticated()
-                                .requestMatchers("/api/v1/transactions**").authenticated()
-                                .anyRequest().authenticated()
+                                .requestMatchers("/api/v1/clients/**").authenticated()
+                                .requestMatchers("/api/v1/accounts/**").authenticated()
+                                .requestMatchers("/api/v1/transactions/**").authenticated()
+                                .anyRequest().permitAll()
                 );
 
         http.authenticationProvider(authenticationProvider());

@@ -9,6 +9,7 @@ import com.example.task1.entity.Client;
 import com.example.task1.entity.Transaction;
 import com.example.task1.entity.enums.AccountStatus;
 import com.example.task1.entity.enums.ClientStatus;
+import com.example.task1.entity.enums.Metrics;
 import com.example.task1.entity.enums.TransactionStatus;
 import com.example.task1.mapper.TransactionMapper;
 import com.example.task1.repository.AccountRepository;
@@ -37,6 +38,7 @@ public class TransactionServiceImpl implements TransactionService {
     private long maxRejectedCount;
 
     private final ClientServiceHttpClient httpClientService;
+    private final MetricServiceImpl metricService;
 
     private final TransactionRepository transactionRepository;
     private final AccountRepository accountRepository;
@@ -69,13 +71,13 @@ public class TransactionServiceImpl implements TransactionService {
 
         ClientStatus clientStatus = httpClientService.getClientStatus(transactionDto.accountId(), clientId);
 
+        System.out.println("status " + clientStatus);
+
         if (clientStatus == ClientStatus.BLOCKED) {
             blockClient(clientId);
             blockAccount(account);
             shouldReject = true;
-        }
-
-        if (!AccountStatus.OPEN.equals(account.getAccountStatus())) {
+        }else if (!AccountStatus.OPEN.equals(account.getAccountStatus())) {
             throw new IllegalStateException("Account is not in OPEN status");
         }
 
@@ -99,6 +101,7 @@ public class TransactionServiceImpl implements TransactionService {
             if (shouldArrest) {
                 account.setAccountStatus(AccountStatus.ARRESTED);
                 accountRepository.save(account);
+                metricService.increment(Metrics.ARRESTED_ACCOUNT_COUNT);
                 log.warn("Account {} arrested due to too many rejected transactions", account.getId());
             }
         } else {
@@ -156,6 +159,7 @@ public class TransactionServiceImpl implements TransactionService {
 
         client.setClientStatus(ClientStatus.BLOCKED);
         clientRepository.save(client);
+        metricService.increment(Metrics.BLOCKED_CLIENT_COUNT);
     }
 
     private void blockAccount(Account account){

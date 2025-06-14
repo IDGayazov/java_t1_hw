@@ -29,6 +29,12 @@ kafka:
     topic:
       transactions-topic: t1_demo_transactions
 
+clientservice:
+  url: http://localhost:8087/api/v1/
+
+unblockservice:
+  url: http://localhost:8089/api/v1/unblock
+
 token:
   signing:
     key:
@@ -49,3 +55,13 @@ app:
     cache-time-min: 2
     generator.enabled: false
   time.limit-ms: 1000
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, prometheus, metrics
+  metrics:
+    export:
+      prometheus:
+        enabled: true

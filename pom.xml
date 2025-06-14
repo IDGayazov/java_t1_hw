@@ -66,5 +66,6 @@
         <module>main</module>
         <module>transactionservice</module>
         <module>clientservice</module>
+        <module>unblockservice</module>
     </modules>
 </project>
