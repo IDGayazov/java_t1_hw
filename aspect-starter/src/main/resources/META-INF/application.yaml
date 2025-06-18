@@ -1,0 +1,19 @@
+app:
+  time:
+    limit-ms:
+
+error:
+  logging:
+    kafka:
+      enabled:
+      bootstrap-servers:
+      topic:
+      producer:
+        retries:
+        acks:
+    db:
+      enabled:
+      schema-validation:
+      auto-create-tables:
+
+

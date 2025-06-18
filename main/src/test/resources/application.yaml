@@ -1,0 +1,64 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+  liquibase:
+    enabled: false
+
+token:
+  signing:
+    key: 53A73E5F1C4E0A2D3B5F2D784E6A1B423D6F247D1F6E5C3A596D635A75327855
+  expiration: 100000
+
+clientservice:
+  url: http://localhost:8087/api/v1/
+
+kafka:
+  bootstrap:
+    server: ${KAFKA_SERVER:localhost:9092}
+  producer:
+    enable: true
+    topic:
+      client-topic: t1_demo_metrics
+      transactions-accept: t1_demo_transaction_accept
+  consumer:
+    group-id: t1-demo
+    max.poll.records: 10
+    session-timeout: 10000
+    heartbeat.interval: 3000
+    topic:
+      transactions-topic: t1_demo_transactions
+      transactions-result-topic: t1_demo_transaction_result
+
+transaction:
+  max-rejected: 5
+
+unblockservice:
+  url: http://localhost:8089/api/v1/unblock
+  client-count: 3
+  account-count: 3
+  interval: PT3M
+
+app:
+  data:
+    cache-time-min: 2
+    generator.enabled: false
+  time.limit-ms: 1000
+
+error:
+  logging:
+    kafka:
+      enabled: true
+      bootstrap-servers: ${KAFKA_SERVER:localhost:9092}
+      topic: client-topic
+      producer:
+        retries: 3
+        acks: all
+    db:
+      enabled: true
+      schema-validation: true
+      auto-create-tables: true
