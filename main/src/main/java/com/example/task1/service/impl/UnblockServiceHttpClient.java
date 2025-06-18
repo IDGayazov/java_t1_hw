@@ -59,4 +59,12 @@ public class UnblockServiceHttpClient {
             throw new RestClientException("Communication error with unblock service");
         }
     }
+
+    public String getUnblockServiceUrl() {
+        return unblockServiceUrl;
+    }
+
+    public void setUnblockServiceUrl(String unblockServiceUrl) {
+        this.unblockServiceUrl = unblockServiceUrl;
+    }
 }

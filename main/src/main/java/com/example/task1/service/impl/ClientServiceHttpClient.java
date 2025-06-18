@@ -64,4 +64,12 @@ public class ClientServiceHttpClient {
             throw new UndefinedClientStatusException("Error calling client service: " + e.getMessage());
         }
     }
+
+    public String getClientServiceUrl() {
+        return clientServiceUrl;
+    }
+
+    public void setClientServiceUrl(String clientServiceUrl) {
+        this.clientServiceUrl = clientServiceUrl;
+    }
 }

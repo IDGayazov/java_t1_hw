@@ -166,4 +166,12 @@ public class TransactionServiceImpl implements TransactionService {
         account.setAccountStatus(AccountStatus.BLOCKED);
         accountRepository.save(account);
     }
+
+    public long getMaxRejectedCount() {
+        return maxRejectedCount;
+    }
+
+    public void setMaxRejectedCount(long maxRejectedCount) {
+        this.maxRejectedCount = maxRejectedCount;
+    }
 }

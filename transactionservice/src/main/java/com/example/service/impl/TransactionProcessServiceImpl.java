@@ -49,7 +49,7 @@ public class TransactionProcessServiceImpl implements TransactionProcessService 
         sendAcceptedResult(transactionDto);
     }
 
-    private boolean checkTransactionLimit(Long clientId, TransactionDto currentTransaction) {
+    public boolean checkTransactionLimit(Long clientId, TransactionDto currentTransaction) {
         Queue<TransactionDto> clientTransactions = transactionStore.getOrDefault(clientId, new LinkedList<>());
 
         LocalDateTime windowStart = LocalDateTime.now().minusSeconds(timeWindowSeconds);
@@ -65,7 +65,7 @@ public class TransactionProcessServiceImpl implements TransactionProcessService 
                 currentTransaction.timestamp().isAfter(windowStart);
     }
 
-    private void blockTransactions(Long clientId) {
+    public void blockTransactions(Long clientId) {
         Queue<TransactionDto> clientTransactions = transactionStore.get(clientId);
         if (clientTransactions == null) return;
 
@@ -76,7 +76,7 @@ public class TransactionProcessServiceImpl implements TransactionProcessService 
                 .forEach(this::sendBlockedResult);
     }
 
-    private void addTransactionToStore(TransactionDto transactionDto) {
+    public void addTransactionToStore(TransactionDto transactionDto) {
         transactionStore.compute(transactionDto.clientId(), (key, queue) -> {
             if (queue == null) {
                 queue = new LinkedList<>();
@@ -86,7 +86,7 @@ public class TransactionProcessServiceImpl implements TransactionProcessService 
         });
     }
 
-    private void sendBlockedResult(TransactionDto dto) {
+    public void sendBlockedResult(TransactionDto dto) {
         TransactionResult result = new TransactionResult(
                 dto.accountId(),
                 dto.transactionId(),
@@ -96,7 +96,7 @@ public class TransactionProcessServiceImpl implements TransactionProcessService 
         kafkaTemplate.send(transactionsResultTopic, result);
     }
 
-    private void sendRejectedResult(TransactionDto dto, String reason) {
+    public void sendRejectedResult(TransactionDto dto, String reason) {
         TransactionResult result = new TransactionResult(
                 dto.accountId(),
                 dto.transactionId(),
@@ -106,7 +106,7 @@ public class TransactionProcessServiceImpl implements TransactionProcessService 
         kafkaTemplate.send(transactionsResultTopic, result);
     }
 
-    private void sendAcceptedResult(TransactionDto dto) {
+    public void sendAcceptedResult(TransactionDto dto) {
         TransactionResult result = new TransactionResult(
                 dto.accountId(),
                 dto.transactionId(),
@@ -114,5 +114,37 @@ public class TransactionProcessServiceImpl implements TransactionProcessService 
                 "Transaction accepted"
         );
         kafkaTemplate.send(transactionsResultTopic, result);
+    }
+
+    public KafkaTemplate<String, TransactionResult> getKafkaTemplate() {
+        return kafkaTemplate;
+    }
+
+    public String getTransactionsResultTopic() {
+        return transactionsResultTopic;
+    }
+
+    public void setTransactionsResultTopic(String transactionsResultTopic) {
+        this.transactionsResultTopic = transactionsResultTopic;
+    }
+
+    public int getMaxTransactionCount() {
+        return maxTransactionCount;
+    }
+
+    public void setMaxTransactionCount(int maxTransactionCount) {
+        this.maxTransactionCount = maxTransactionCount;
+    }
+
+    public long getTimeWindowSeconds() {
+        return timeWindowSeconds;
+    }
+
+    public void setTimeWindowSeconds(long timeWindowSeconds) {
+        this.timeWindowSeconds = timeWindowSeconds;
+    }
+
+    public Map<Long, Queue<TransactionDto>> getTransactionStore() {
+        return transactionStore;
     }
 }
